@@ -12,12 +12,21 @@ import java.net.Socket;
  * для з/п больше 500 000 – ставка 15 %.
  */
 public class Client {
+
+    /***
+     * Метод для вывода в консоль сообщения, что необходимо сделать пользователю
+     */
+    private static void printInvitationMessage() {
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.println("Введите зарплату сотрудника или  quite для выхода");
+    }
+
     public static void main(String[] args) {
         try {
-            System.out.println("server connecting....");
+            System.out.println("Подключение к серверу....");
             //установление соединения между локальной машиной и указанным портом узла сети
             Socket clientSocket = new Socket("localhost", 2525);
-            System.out.println("connection established....");
+            System.out.println("Соединенсе с сервером установлено....");
 
             //создание буферизированного символьного потока ввода
             BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
@@ -26,27 +35,33 @@ public class Client {
             //создание потока ввода
             ObjectInputStream cois = new ObjectInputStream(clientSocket.getInputStream());
 
-            System.out.println("Enter any string to send to server \n\t('quite' − programme terminate)");
+            printInvitationMessage();
 
             String clientMessage = stdin.readLine();
-            System.out.println("you've entered: " + clientMessage);
             //выполнение цикла, пока строка не будет равна «quite»
-
             while (!clientMessage.equals("quite")) {
+                System.out.println("Вы ввели: " + clientMessage);
                 //потоку вывода присваивается значение строковой переменной (передается серверу)
                 coos.writeObject(clientMessage);
                 //выводится на экран содержимое потока ввода (переданное сервером)
-                System.out.println("~server~: " +
+                System.out.println("Cумма налога: " +
                         cois.readObject());
-                System.out.println("---------------------------");
+
+                printInvitationMessage();
+
                 //ввод текста с клавиатуры
                 //вывод в консоль строки и значения строковой переменной
-                System.out.println("you've entered: " + clientMessage);
                 clientMessage = stdin.readLine();
             }
+
+            System.out.println("Вы ввели: " + clientMessage);
+            //потоку вывода присваивается значение строковой переменной (передается серверу)
+            coos.writeObject(clientMessage);
             coos.close(); //закрытие потока вывода
             cois.close(); //закрытие потока ввода
             clientSocket.close(); // закрытие сокета
+
+            System.out.println("Соедиенеие с сервером разорвано....");
         } catch (Exception e) {
             e.printStackTrace();
         }
